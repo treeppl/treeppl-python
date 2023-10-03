@@ -13,10 +13,17 @@ class Tree:
             return f"Leaf(age={self.age})"
 
     @staticmethod
-    def load_nexus(filename):
+    def load(filename, format="nexus"):
+        if format == "phyjson":
+            return Tree.load_phyjson(filename)
+        return Tree.load_biopython(filename, format)
+
+
+    @staticmethod
+    def load_biopython(filename, format="nexus"):
         from Bio import Phylo
 
-        tree = Phylo.read(filename, "nexus")
+        tree = Phylo.read(filename, format)
         if not tree.is_bifurcating():
             return
         tree_depths = tree.depths()
