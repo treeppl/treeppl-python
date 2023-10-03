@@ -1,0 +1,45 @@
+type Tree =
+  | Leaf {age: Real}
+  | Node {left: Tree, right: Tree, age: Real}
+
+function simulateSubtree(time: Real, lambda: Real, mu: Real) {
+  assume waitingTime ~ Exponential(lambda + mu);
+  if waitingTime > time {
+    weight 0.0;
+    resample;
+  } else {
+    assume isSpeciation ~ Bernoulli(lambda / (lambda + mu));
+    if isSpeciation {
+      simulateSubtree(time - waitingTime, lambda, mu);
+      simulateSubtree(time - waitingTime, lambda, mu);
+    }
+  }
+}
+
+function walk(node: Tree, time:Real, lambda: Real, mu: Real) {
+  assume waitingTime ~ Exponential(lambda);
+  if time - waitingTime > node.age {
+    simulateSubtree(time - waitingTime, lambda, mu);
+    weight 2.0;
+    observe 0 ~ Poisson(mu * waitingTime);
+    walk(node, time - waitingTime, lambda, mu);
+  } else {
+    observe 0 ~ Poisson(mu * (time - node.age));
+    if node is Node {
+      observe 0.0 ~ Exponential(lambda);
+    }
+    resample;
+    if node is Node {
+      walk(node.left, node.age, lambda, mu);
+      walk(node.right, node.age, lambda, mu);
+    }
+  }
+}
+
+model function crbd(tree: Tree): Real {
+  assume lambda ~ Gamma(1.0, 1.0);
+  assume mu ~ Gamma(1.0, 0.5);
+  walk(tree.left, tree.age, lambda, mu);
+  walk(tree.right, tree.age, lambda, mu);
+  return lambda;
+}
