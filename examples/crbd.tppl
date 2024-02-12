@@ -1,12 +1,7 @@
-type Tree =
-  | Leaf {age: Real}
-  | Node {left: Tree, right: Tree, age: Real}
-
 function simulateSubtree(time: Real, lambda: Real, mu: Real) {
   assume waitingTime ~ Exponential(lambda + mu);
   if waitingTime > time {
-    weight 0.0;
-    resample;
+    weight 0.0; resample;
   } else {
     assume isSpeciation ~ Bernoulli(lambda / (lambda + mu));
     if isSpeciation {
@@ -20,7 +15,7 @@ function walk(node: Tree, time:Real, lambda: Real, mu: Real) {
   assume waitingTime ~ Exponential(lambda);
   if time - waitingTime > node.age {
     simulateSubtree(time - waitingTime, lambda, mu);
-    weight 2.0;
+    weight 2.0; // Unaligned. likelihood resampling will not work
     observe 0 ~ Poisson(mu * waitingTime);
     walk(node, time - waitingTime, lambda, mu);
   } else {
