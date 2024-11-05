@@ -1,4 +1,10 @@
 from .serialization import Object, constructor
+import json
+
+try:
+    from Bio import Phylo
+except ImportError:
+    pass
 
 
 class Tree:
@@ -7,10 +13,25 @@ class Tree:
         def __repr__(self):
             return f"Node(left={self.left!r}, right={self.right!r}, age={self.age})"
 
+        def to_biopython(self, parent=None):
+            if parent is None:
+                parent = self
+            return Phylo.BaseTree.Clade(
+                branch_length=parent.age - self.age,
+                clades=[
+                    child.to_biopython(parent=self) for child in [self.left, self.right]
+                ],
+            )
+
     @constructor("Leaf")
     class Leaf(Object):
         def __repr__(self):
             return f"Leaf(age={self.age})"
+
+        def to_biopython(self, parent=None):
+            if parent is None:
+                parent = self
+            return Phylo.BaseTree.Clade(branch_length=parent.age - self.age)
 
     @staticmethod
     def load(filename, format="nexus"):
@@ -18,11 +39,8 @@ class Tree:
             return Tree.load_phyjson(filename)
         return Tree.load_biopython(filename, format)
 
-
     @staticmethod
     def load_biopython(filename, format="nexus"):
-        from Bio import Phylo
-
         tree = Phylo.read(filename, format)
         if not tree.is_bifurcating():
             return
@@ -43,8 +61,6 @@ class Tree:
 
     @staticmethod
     def load_phyjson(filename):
-        import json
-
         def age(node):
             children = node.get("children")
             if children:

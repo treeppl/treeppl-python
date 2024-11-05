@@ -1,0 +1,7 @@
+model function coin(outcomes: Bool[]): Real {
+  assume p ~ Uniform(0.0, 1.0);
+  for i in 1 to (length(outcomes)) {
+    observe outcomes[i] ~ Bernoulli(p);
+  }
+  return p;
+}

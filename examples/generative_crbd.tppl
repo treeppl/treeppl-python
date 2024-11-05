@@ -1,0 +1,18 @@
+model function generativeCrbd(time: Real, lambda: Real, mu: Real): Tree {
+  assume waitingTime ~ Exponential(lambda + mu);
+  let eventTime = time - waitingTime;
+  if eventTime < 0.0 {
+    return Leaf {age = 0.0};
+  } else {
+    assume isSpeciation ~ Bernoulli(lambda / (lambda + mu));
+    if isSpeciation {
+      return Node {
+        left = generativeCrbd(eventTime, lambda, mu),
+        right = generativeCrbd(eventTime, lambda, mu),
+        age = eventTime
+      };
+    } else {
+      return Leaf {age = eventTime};
+    }
+  }
+}

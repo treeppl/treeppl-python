@@ -1,4 +1,5 @@
 import json
+from operator import itemgetter
 from tempfile import TemporaryDirectory
 from subprocess import Popen, PIPE, STDOUT
 import numpy as np
@@ -9,7 +10,13 @@ from .serialization import from_json, to_json
 
 class Model:
     def __init__(
-        self, source=None, filename=None, method="smc-bpf", samples=1_000, **kwargs
+        self,
+        source=None,
+        filename=None,
+        method="smc-bpf",
+        samples=1000,
+        subsamples=None,
+        **kwargs,
     ):
         self.temp_dir = TemporaryDirectory(prefix="treeppl_")
         if filename:
@@ -24,10 +31,14 @@ class Model:
             "-m",
             method,
         ]
+        if subsamples:
+            args.extend(["--subsample", "-n", str(subsamples)])
         for k, v in kwargs.items():
             args.append(f"--{k.replace('_', '-')}")
             if v is not True:
                 args.append(str(v))
+        if not "resample" in kwargs:
+            args.extend(["--resample", "align"])
         with Popen(
             args=args, cwd=self.temp_dir.name, stdout=PIPE, stderr=STDOUT
         ) as proc:
@@ -70,6 +81,5 @@ class InferenceResult:
         self.nweights = np.exp(self.weights)
         self.norm_const = result.get("normConst", np.nan)
 
-    def subsample(self, size=1):
-        idx = np.random.choice(len(self.nweights), size, p=self.nweights)
-        return [self.samples[i] for i in idx]
+    def items(self, *args):
+        return list(map(itemgetter(*args), self.samples))

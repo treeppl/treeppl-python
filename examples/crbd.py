@@ -11,16 +11,19 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-tree = treeppl.Tree.load("trees/Alcedinidae.phyjson", format="phyjson")
-
+alcedinidae = treeppl.Tree.load("trees/Alcedinidae.phyjson", format="phyjson")
 samples = None
-with treeppl.Model(filename="crbd.tppl", samples=10_000) as crbd:
-    while True:
-        res = crbd(tree=tree)
-        samples = pd.concat([samples, pd.DataFrame({
-            'lambda': res.subsample(10),
-            'lweight': res.norm_const,
-        })])
+with treeppl.Model(filename="crbd.tppl", samples=10000, subsamples=10) as crbd:
+    for i in range(1000):
+        res = crbd(tree=alcedinidae)
+        samples = pd.concat([
+            samples,
+            pd.DataFrame({
+                "lambda": res.items(0), "mu": res.items(1), "lweight": res.norm_const
+            })
+        ])
+        weights = np.exp(samples.lweight - samples.lweight.max())
         plt.clf()
-        sns.kdeplot(data=samples, x="lambda", weights=np.exp(samples.lweight - samples.lweight.max()))
+        sns.kdeplot(data=samples, x="lambda", weights=weights)
+        sns.kdeplot(data=samples, x="mu", weights=weights)
         plt.pause(0.05)
