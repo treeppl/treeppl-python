@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 
-import sys
-
-sys.path.append("..")
-
 import treeppl
 import numpy as np
 import pandas as pd

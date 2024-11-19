@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 
-import sys
-
-sys.path.append("..")
-
 import treeppl
 import matplotlib.pyplot as plt
 import seaborn as sns
