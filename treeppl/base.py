@@ -4,9 +4,45 @@ from tempfile import TemporaryDirectory
 from subprocess import Popen, PIPE, STDOUT
 import numpy as np
 
+import tarfile
+import shutil
+import os
+import importlib
+
 from .exceptions import CompileError, InferenceError
 from .serialization import from_json, to_json
 
+def get_tpplc_binary():
+    tpplc = shutil.which("tpplc")
+    if tpplc:
+        return tpplc
+
+    # NOTE(vipa, 2025-06-04): The selfcontained compiler must be
+    # deployed to a directory somewhere. There are three important
+    # limitatations:
+    # - The target directory must have a path that's at most 40
+    #   characters long. This is because the compiler and its
+    #   dependencies contain hard-coded absolute paths that must be
+    #   rewritten, and we can't replace arbitrarily long strings in a
+    #   binary. The temporary directory typically has a very short
+    #   path.
+    # - We'd like to remove the deployed compiler when we remove the
+    #   python package. The temporary directory is cleared regularly
+    #   on most systems.
+    # - We'd like to allow multiple versions to be installed at once,
+    #   e.g., via virtual envs. We accomplish this by including the
+    #   package version in the deployed directory. This means that we
+    #   might share (immutable) deployed directories between virtual
+    #   envs, which seems fine, and that differing versions will get
+    #   differing deployed directories.
+    tmp_dir = '/tmp'
+    deployed_basename = "@DEPLOYED_BASENAME@" # This will be substituted by nix when building the wheel
+    tppl_dir_path = os.path.join(tmp_dir, deployed_basename)
+    if not os.path.isdir(tppl_dir_path):
+        with importlib.resources.path('treeppl', deployed_basename + ".tar.gz") as tarball:
+            with tarfile.open(tarball) as tar:
+                tar.extractall(tmp_dir)
+    return os.path.join(tppl_dir_path, "tpplc")
 
 class Model:
     def __init__(
@@ -26,10 +62,12 @@ class Model:
         with open(self.temp_dir.name + "/__main__.tppl", "w") as f:
             f.write(source)
         args = [
-            "tpplc",
+            get_tpplc_binary(),
             "__main__.tppl",
             "-m",
             method,
+            "-p",
+            str(samples),
         ]
         if subsamples:
             args.extend(["--subsample", "-n", str(subsamples)])
@@ -42,15 +80,16 @@ class Model:
         with Popen(
             args=args, cwd=self.temp_dir.name, stdout=PIPE, stderr=STDOUT
         ) as proc:
-            proc.wait()
+            try:
+                proc.wait()
+            except KeyboardInterrupt:
+                output = proc.stdout.read().decode("utf-8")
+                output = output.replace("__main__.tppl", "source code")
+                raise CompileError(f"Could not compile the TreePPL model:\n{output}")
             if proc.returncode != 0:
                 output = proc.stdout.read().decode("utf-8")
                 output = output.replace("__main__.tppl", "source code")
                 raise CompileError(f"Could not compile the TreePPL model:\n{output}")
-        self.set_samples(samples)
-
-    def set_samples(self, samples):
-        self.samples = samples
 
     def __enter__(self):
         return self
@@ -64,7 +103,6 @@ class Model:
         args = [
             f"{self.temp_dir.name}/out",
             f"{self.temp_dir.name}/input.json",
-            str(self.samples),
         ]
         with Popen(args=args, stdout=PIPE) as proc:
             return InferenceResult(proc.stdout)
