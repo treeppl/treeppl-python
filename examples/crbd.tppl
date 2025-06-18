@@ -30,7 +30,7 @@ function walk(node: Tree, time:Real, lambda: Real, mu: Real) {
   }
 }
 
-model function crbd(tree: Tree): Real[] {
+model function crbd(tree: Tree) => Real[] {
   assume lambda ~ Gamma(1.0, 1.0);
   assume mu ~ Gamma(1.0, 0.5);
   walk(tree.left, tree.age, lambda, mu);

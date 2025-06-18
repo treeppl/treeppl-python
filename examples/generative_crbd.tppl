@@ -1,4 +1,4 @@
-model function generativeCrbd(time: Real, lambda: Real, mu: Real): Tree {
+model function generativeCrbd(time: Real, lambda: Real, mu: Real) => Tree {
   assume waitingTime ~ Exponential(lambda + mu);
   let eventTime = time - waitingTime;
   if eventTime < 0.0 {
