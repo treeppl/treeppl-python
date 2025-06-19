@@ -23,8 +23,8 @@ def object_hook(dictionary):
         return constructor_to_class[constructor](**dictionary.get("__data__", {}))
     if "__float__" in dictionary:
         return float(dictionary["__float__"])
-    if "__tensor__" in dictionary:
-        return np.array(dictionary["__tensor__"]).reshape(dictionary["__tensorShape__"])
+    if set(dictionary.keys()) == {"m", "n", "arr"}:
+        return np.array(dictionary["arr"]).reshape(dictionary["m"], dictionary["n"])
     return dictionary
 
 
@@ -46,8 +46,9 @@ class JSONEncoder(json.JSONEncoder):
         try:
             if isinstance(obj, np.ndarray):
                 return {
-                    "__tensor__": obj.flatten().tolist(),
-                    "__tensorShape__": obj.shape,
+                    "m": obj.shape[0],
+                    "n": obj.shape[1],
+                    "arr": obj.flatten().tolist(),
                 }
             return json.JSONEncoder.default(self, obj)
         except TypeError:
