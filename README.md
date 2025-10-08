@@ -22,7 +22,7 @@ import seaborn as sns
 
 # Define a TreePPL model source code
 source = """\
-model function coin(outcomes: Bool[]): Real {
+model function coin(outcomes: Bool[]) => Real {
   assume p ~ Beta(2.0, 2.0);
   for i in 1 to (length(outcomes)) {
     observe outcomes[i] ~ Bernoulli(p);
