@@ -87,6 +87,21 @@
         "type": "github"
       }
     },
+    "flake-utils_6": {
+      "locked": {
+        "lastModified": 1653893745,
+        "narHash": "sha256-0jntwV3Z8//YwuOjzhV2sgJJPt+HY6KhU7VZUL0fKZQ=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "1ed9fb1935d260de5fe1c2f7ee0ebaae17ed2fa1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "miking": {
       "inputs": {
         "flake-utils": "flake-utils_3",
@@ -97,17 +112,16 @@
       },
       "locked": {
         "dir": "misc/packaging",
-        "lastModified": 1749736791,
-        "narHash": "sha256-gAli9Wu3APyqK0MylofQCIaSIh8BYT1x874KMNdRyr8=",
-        "owner": "elegios",
+        "lastModified": 1762943726,
+        "narHash": "sha256-tafzRpkRipcDV1NZb6Gz1SUX7KEKbCSQwgilUdl4d1o=",
+        "owner": "miking-lang",
         "repo": "miking",
-        "rev": "beebee83cce6063a3a99f56794e223f04bd4f4f1",
+        "rev": "658b91a15ce620b1659546084a967ea48eb13ac0",
         "type": "github"
       },
       "original": {
         "dir": "misc/packaging",
-        "owner": "elegios",
-        "ref": "update-nix-packaging-stuff",
+        "owner": "miking-lang",
         "repo": "miking",
         "type": "github"
       }
@@ -122,21 +136,21 @@
         "nixpkgs": [
           "treeppl",
           "nixpkgs"
-        ]
+        ],
+        "relocatable": "relocatable"
       },
       "locked": {
         "dir": "misc/packaging",
-        "lastModified": 1749727329,
-        "narHash": "sha256-norTg828u85UIFrqcH89DxOMPM97T9Cz9VoWcKE4cpQ=",
-        "owner": "elegios",
+        "lastModified": 1762944496,
+        "narHash": "sha256-cZaDNspOd/mVrL6nKF/KK7j4va4gvShsvklJlyH3RLY=",
+        "owner": "miking-lang",
         "repo": "miking-dppl",
-        "rev": "0e5d1703927cc1bcfdb6a19e5b070e5b5e18893a",
+        "rev": "8fa394182bd41b94d53e3c7bc2b696ea4fa00ceb",
         "type": "github"
       },
       "original": {
         "dir": "misc/packaging",
-        "owner": "elegios",
-        "ref": "nix-flake",
+        "owner": "miking-lang",
         "repo": "miking-dppl",
         "type": "github"
       }
@@ -183,6 +197,28 @@
         "owner": "elegios",
         "repo": "relocatable.nix",
         "rev": "5723dca6e9b7e54c102c009d2fd129663c4f2f59",
+        "type": "github"
+      },
+      "original": {
+        "owner": "elegios",
+        "repo": "relocatable.nix",
+        "type": "github"
+      }
+    },
+    "relocatable_2": {
+      "inputs": {
+        "flake-utils": "flake-utils_6",
+        "nixpkgs": [
+          "treeppl",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1763399696,
+        "narHash": "sha256-H19tupNDXwLeInGpkHLploEY6AxdI4VbkSD2QoFiYFU=",
+        "owner": "elegios",
+        "repo": "relocatable.nix",
+        "rev": "81ff68c1f3a7a359dfcf5274b59adecafc016783",
         "type": "github"
       },
       "original": {
@@ -266,21 +302,20 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "relocatable": "relocatable"
+        "relocatable": "relocatable_2"
       },
       "locked": {
         "dir": "misc/packaging",
-        "lastModified": 1749819340,
-        "narHash": "sha256-3kvlhQWa8n4l/q9+bSD9oFjeNd4RGuzujEnMYWSk9JY=",
-        "owner": "elegios",
+        "lastModified": 1763568158,
+        "narHash": "sha256-+OoZ/LI13bWXJHJaiDp5UJbRarYp3PpZrygpLb36Sto=",
+        "owner": "treeppl",
         "repo": "treeppl",
-        "rev": "c71a697fe705d4daa8be54ada863e0790fd101da",
+        "rev": "a36b4df2184c131a83d1d128264051694929a873",
         "type": "github"
       },
       "original": {
         "dir": "misc/packaging",
-        "owner": "elegios",
-        "ref": "nix-flake",
+        "owner": "treeppl",
         "repo": "treeppl",
         "type": "github"
       }
