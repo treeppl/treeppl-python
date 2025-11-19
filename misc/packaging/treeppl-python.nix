@@ -5,7 +5,7 @@
 
 let
   distribution = "treeppl";
-  version = "0.1";
+  version = "0.2";
   os =
     if stdenv.hostPlatform.isLinux then "linux" else
     if stdenv.hostPlatform.isDarwin then "macosx_11_0" else
@@ -15,7 +15,8 @@ let
     if stdenv.hostPlatform.isAarch64 then "arm64" else
       throw "Unsupported host architecture";
   platform = "${os}_${architecture}";
-  selfcontainedDir = lib.strings.removeSuffix ".tar.gz" tpplc-tmp-tar-gz.name;
+  selfcontainedDir = tpplc-tmp-tar-gz.passthru.path;
+  tarName = tpplc-tmp-tar-gz.passthru.tarName;
   args = {
     buildInputs = [ tinyxxd zip ];
   };
@@ -25,9 +26,10 @@ runCommand "treeppl-python" args ''
   # Actual content we care about
   cp -r ${nix-gitignore.gitignoreSource [] ../..}/treeppl .
   chmod +w treeppl
-  cp ${tpplc-tmp-tar-gz}/${tpplc-tmp-tar-gz.name} treeppl/${tpplc-tmp-tar-gz.name}
+  cp ${tpplc-tmp-tar-gz}/${tarName} treeppl/${tarName}
   substituteInPlace treeppl/base.py \
-    --replace-fail "@DEPLOYED_BASENAME@" "${selfcontainedDir}"
+    --replace-fail "@DEPLOYED_BASENAME@" "${selfcontainedDir}" \
+    --replace-fail "@TARBALL_NAME@" "${tarName}"
 
   # Wheel stuff that's needed for it to be valid
   mkdir -p ${distribution}-${version}.dist-info

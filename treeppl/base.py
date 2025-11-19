@@ -37,9 +37,10 @@ def get_tpplc_binary():
     #   differing deployed directories.
     tmp_dir = '/tmp'
     deployed_basename = "@DEPLOYED_BASENAME@" # This will be substituted by nix when building the wheel
+    tarball_name = "@TARBALL_NAME@" # This will be substituted by nix when building the wheel
     tppl_dir_path = os.path.join(tmp_dir, deployed_basename)
     if not os.path.isdir(tppl_dir_path):
-        with importlib.resources.path('treeppl', deployed_basename + ".tar.gz") as tarball:
+        with importlib.resources.path('treeppl', tarball_name) as tarball:
             with tarfile.open(tarball) as tar:
                 tar.extractall(tmp_dir)
     return os.path.join(tppl_dir_path, "tpplc")
