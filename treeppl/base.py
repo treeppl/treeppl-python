@@ -80,8 +80,6 @@ class Model:
             args.append(f"--{k.replace('_', '-')}")
             if v is not True:
                 args.append(str(v))
-        if not "resample" in kwargs:
-            args.extend(["--resample", "align"])
         with Popen(
             args=args, cwd=self.temp_dir.name, stdout=PIPE, stderr=STDOUT
         ) as proc:
