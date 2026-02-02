@@ -13,10 +13,8 @@ from .exceptions import CompileError, InferenceError
 from .serialization import from_json, to_json
 
 def get_tpplc_binary():
-    tpplc = shutil.which("tpplc")
-    if tpplc:
-        return tpplc
-
+    if os.environ.get('TPPLC'):
+        return os.environ['TPPLC']
     # NOTE(vipa, 2025-06-04): The selfcontained compiler must be
     # deployed to a directory somewhere. There are three important
     # limitatations:
