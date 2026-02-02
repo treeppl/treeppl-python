@@ -42,7 +42,11 @@ def get_tpplc_binary():
     if not os.path.isdir(tppl_dir_path):
         with importlib.resources.path('treeppl', tarball_name) as tarball:
             with tarfile.open(tarball) as tar:
-                tar.extractall(tmp_dir)
+                if hasattr(tarfile, 'tar_filter'):
+                    tar.extractall(tmp_dir, filter='tar')
+                else:
+                    # NOTE(vipa, 2025-11-20): This allows us to support Python < 3.12
+                    tar.extractall(tmp_dir)
     return os.path.join(tppl_dir_path, "tpplc")
 
 class Model:
