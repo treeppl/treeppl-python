@@ -5,7 +5,7 @@
 
 let
   distribution = "treeppl";
-  version = "0.2";
+  version = "0.3";
   os =
     if stdenv.hostPlatform.isLinux then "linux" else
     if stdenv.hostPlatform.isDarwin then "macosx_11_0" else
