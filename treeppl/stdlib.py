@@ -18,9 +18,7 @@ class Tree:
                 parent = self
             return Phylo.BaseTree.Clade(
                 branch_length=parent.age - self.age,
-                clades=[
-                    child.to_biopython(parent=self) for child in [self.left, self.right]
-                ],
+                clades=[child.to_biopython(parent=self) for child in [self.left, self.right]],
             )
 
     @constructor("Leaf")
@@ -64,9 +62,7 @@ class Tree:
         def age(node):
             children = node.get("children")
             if children:
-                return max(0.0, node.get("branch_length", 0)) + max(
-                    age(children[0]), age(children[1])
-                )
+                return max(0.0, node.get("branch_length", 0)) + max(age(children[0]), age(children[1]))
             return node["branch_length"]
 
         def convert(node, age):
