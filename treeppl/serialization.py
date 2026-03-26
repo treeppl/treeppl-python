@@ -3,7 +3,6 @@ import numpy as np
 
 from .exceptions import SerializationError
 
-
 constructor_to_class = {}
 class_to_constructor = {}
 
@@ -54,13 +53,11 @@ class JSONEncoder(json.JSONEncoder):
         except TypeError:
             try:
                 return {
-                    "__constructor__": class_to_constructor.get(
-                        obj.__class__, obj.__class__.__name__
-                    ),
+                    "__constructor__": class_to_constructor.get(obj.__class__, obj.__class__.__name__),
                     "__data__": vars(obj),
                 }
             except:
-                raise SerializationError("Could not serialize the data.")
+                raise SerializationError("could not serialize the data")
 
 
 def to_json(value, fp):
