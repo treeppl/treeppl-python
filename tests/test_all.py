@@ -46,6 +46,10 @@ def test_tree_input():
     )
     with treeppl.Model(
         source="""\
+import "treeppl::lib/trees.tppl"
+
+type alias Tree = ClockTree
+
 function count_leaves(tree: Tree) => Int {
   if tree is Node {
     return count_leaves(tree.left) + count_leaves(tree.right);

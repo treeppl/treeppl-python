@@ -1,3 +1,7 @@
+import "treeppl::lib/trees.tppl"
+
+type alias Tree = ClockTree
+
 function simulateExtinctSubtree(time: Real, lambda: Real, mu: Real) {
   assume waitingTime ~ Exponential(lambda + mu);
   if waitingTime > time {
