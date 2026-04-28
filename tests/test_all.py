@@ -46,7 +46,7 @@ def test_tree_input():
     )
     with treeppl.Model(
         source="""\
-import "treeppl::lib/trees.tppl"
+import "treeppl::trees.tppl"
 
 type alias Tree = ClockTree
 
