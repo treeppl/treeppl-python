@@ -1,5 +1,3 @@
-import "treeppl::lib/trees.tppl"
-
 type alias Tree = ClockTree
 
 function simulateExtinctSubtree(time: Real, lambda: Real, mu: Real) {
