@@ -6,6 +6,7 @@ import numpy as np
 import tarfile
 import os
 import importlib
+import importlib.resources
 import shlex
 
 from .exceptions import CompileError, InferenceError
