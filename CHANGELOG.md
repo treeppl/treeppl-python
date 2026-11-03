@@ -1,4 +1,4 @@
-# treeppl-python
+# treeppl-python : an Python package for TreePPL
 
 ## [Unreleased]
 
